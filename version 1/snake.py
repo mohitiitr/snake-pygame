@@ -1,5 +1,5 @@
 import pygame
-import random
+from random import randint
  
 
 
@@ -13,7 +13,7 @@ play_width = 600  # meaning 600 // 30 = 20 width per block
 play_height = 600  # meaning 600 // 30 = 20 height per blo ck
 block_size = 20 # block size
  
-top_left_x = 50 # top left x of play area
+top_left_x = 60 # top left x of play area
 top_left_y = s_height - play_height # top left y of play area
  
 
@@ -27,8 +27,48 @@ direction = 1
 #colors of food that will be generated 
 food_colors = [(0, 255, 0), (255, 0, 0), (0, 255, 255), (255, 255, 0), (255, 165, 0), (0, 0, 255), (128, 0, 128)]
 
+food = (-1,-1)
+is_food_not_there = True
+
 # snake color
 snake_color = (11,102,35)#forest green
+
+def is_food_eaten(x,y,surface):
+    global food
+    global is_food_not_there
+
+    if (x>= food[0]-block_size and x<= food[0] + block_size) and (y>= food[1]-block_size and y<= food[1] + block_size):
+        pygame.draw.rect(surface, (0,0,0), ( food[0], food[1], block_size, block_size), 0) 
+        is_food_not_there = True
+        return True
+    return False    
+
+
+def check_food_loc_valid(x,y):
+    global snake
+    for item in snake:
+        if x== item[0] and y == item[1]:
+            return False
+    return True        
+
+
+def generate_food(surface):
+    global is_food_not_there
+
+    x = top_left_x +block_size * randint(1 , 29)
+    y = top_left_y +block_size * randint(1 , 29)
+    if check_food_loc_valid(x,y) :
+        #true means return this food value else generatenew one
+        is_food_not_there = False
+        pygame.draw.rect(surface, snake_color, ( x, y, block_size, block_size), 0) 
+        return (x,y)
+
+    else : 
+        return generate_food(surface)  
+
+
+    
+
 
 
 def draw_text_atXY(text, size, color, surface ,x = play_width/2 ,  y = play_height/2 , isbold = True):
@@ -82,14 +122,11 @@ def draw_window(surface):
     label = font.render('SNAKE', 1, (255,255,255))
  
     surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2), 30))# 30 here denotes distance from the top
- 
-    # for i in range(len(grid)):
-    #     for j in range(len(grid[i])):
-    #         pygame.draw.rect(surface, grid[i][j], (top_left_x + j* block_size, top_left_y + i * block_size, block_size, block_size), 0)
- 
+
     # draw mesh 
     # IF YOU WANT TO DISABLE / DRAW THE MESH JUST COMMENT / UNCOMMENT THE LINE OF CODE BELOW
     # draw_mesh(surface, 30, 30)
+
     #border
     pygame.draw.rect(surface, (255, 0, 0), (top_left_x, top_left_y, play_width, play_height), 5)
     # pygame.display.update()
@@ -117,11 +154,6 @@ def is_next_move_valid(x , y):
 def make_snake_move(surface):
     global snake
     global direction
-    
-    # draw_text_middle('make snake move', 50, (255,255,255), win)
-    # pygame.display.update()
-    # pygame.time.delay(2000)
-    # draw_text_middle('make snake move' ,50, (0,0,0), win)
 
     pygame.display.update()
     #remove last snake block
@@ -153,20 +185,22 @@ def make_snake_move(surface):
     if is_next_move_valid(x_new , y_new) :
 
 
-        # draw_text_middle(''+str(x_new) + " " + str(y_new), 50, (255,255,255), win)
-        # pygame.display.update()
-        # pygame.time.delay(2000)
-        # draw_text_middle(''+str(x_new) + " " + str(y_new), 50, (0,0,0), win)
+        if is_food_eaten(x_new,y_new,surface):
+            one = 1 # random stuff to make work go
+        else :
+            #remove last element in snake
+            snake.pop()
+            # delete the last snake block 
+            pygame.draw.rect(surface, (0,0,0), ( y,  x, block_size, block_size), 0)
+
 
         # add new point to the snake
         snake.insert(0,(x_new , y_new))
-        #remove last element in snake
-        snake.pop()
+        
         # draw the new snake block on the screen
         pygame.draw.rect(surface, snake_color, ( y_new, x_new, block_size, block_size), 0)     
 
-        # delete the last snake block 
-        pygame.draw.rect(surface, (0,0,0), ( y,  x, block_size, block_size), 0)
+        
         
         return True
 
@@ -184,7 +218,8 @@ def main():
     # if direction is 0 (right) , 1(up) , 2(left ) or 3 (down)
     global direction 
 
-   
+    global food
+    global is_food_not_there
 
     # to run the game  
     run = True
@@ -198,6 +233,11 @@ def main():
     # snakes's speed 
     move_speed = 0.27
 
+
+    is_food_not_there = True
+    food_time =0
+    food_speed = 1.5 # food will appear after 0.5 seconds after being consumed
+
     draw_window(win)
     # pygame.draw.rect(win, snake_color, ( top_left_x + 10, top_left_y +10* block_size, block_size, block_size), 0)
     valid = make_snake_move(win)
@@ -210,8 +250,18 @@ def main():
         
  
         move_time += clock.get_rawtime()
+        food_time += clock.get_rawtime()
         clock.tick()
- 
+        
+        # FOOD APPEARING CODE
+        if food_time/1000 >= food_speed:
+            food_time =0
+            if is_food_not_there :
+                food = generate_food(win)
+                is_food_not_there = False
+
+
+
         # SNAKE MOVING CODE
         if move_time/1000 >= move_speed:
             move_time = 0
@@ -260,6 +310,8 @@ def main():
     draw_text_middle("You Lost !!", 50, (255,255,255), win)
     snake = [(top_left_x + play_width/2 , top_left_y+ play_height/2)]
     direction = 1
+    food = (-1,-1)
+    is_food_not_there = True
     pygame.display.update()
     pygame.time.delay(2000)
  
