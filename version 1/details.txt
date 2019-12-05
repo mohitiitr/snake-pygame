@@ -1,0 +1,10 @@
+details.txt
+
+this game has folllwing controls
+
+(up arrow key )== move up
+(left arrow key) == move left
+(right arrow key) == move right 
+(down arrow key) == move down
+
+updates to be made in comming versions
