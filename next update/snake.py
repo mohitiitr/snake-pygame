@@ -126,7 +126,7 @@ def draw_window(surface):
 
     # draw mesh 
     # IF YOU WANT TO DISABLE / DRAW THE MESH JUST COMMENT / UNCOMMENT THE LINE OF CODE BELOW
-    #draw_mesh(surface, 30, 30)
+    # draw_mesh(surface, 30, 30)
 
     #border
     pygame.draw.rect(surface, (255, 0, 0), (top_left_x, top_left_y, play_width, play_height), 5)
@@ -303,7 +303,7 @@ def main():
                     
                 valid = make_snake_move(win)
                 draw_snake(win)
-        #UNCOMMENT BELOW LINE IF YOU WANT MESH
+ 
         # draw_mesh(win , 30 ,30)
         
         
@@ -327,31 +327,119 @@ def main():
     pygame.time.delay(2000)
  
  
-def main_menu():
-    run = True
-    while run:
-        win.fill((0,0,0))
-        draw_text_atY('Press any key to begin.', 60, (255, 255, 255), win , 100)
-        draw_text_atY('Instructions.', 30, (255, 255, 255), win , 150 ,True)
-        draw_text_atY('(up arrow key )== move up', 20, (255, 255, 255), win , 180, False)
-        draw_text_atY('(left arrow key) == move left', 20, (255, 255, 255), win , 200, False)
-        draw_text_atY('(right arrow key) == move right', 20, (255, 255, 255), win , 220, False)
-        draw_text_atY('(down arrow key) == move down', 20, (255, 255, 255), win , 240, False)
-        draw_text_atY('Version 1.5.3', 15, (255, 255, 255), win , 300, False)
+# def main_menu():
+#     run = True
+#     while run:
+#         win.fill((0,0,0))
+#         draw_text_atY('Press any key to begin.', 60, (255, 255, 255), win , 100)
+#         draw_text_atY('Instructions.', 30, (255, 255, 255), win , 150 ,True)
+#         draw_text_atY('(up arrow key )== move up', 20, (255, 255, 255), win , 180, False)
+#         draw_text_atY('(left arrow key) == move left', 20, (255, 255, 255), win , 200, False)
+#         draw_text_atY('(right arrow key) == move right', 20, (255, 255, 255), win , 220, False)
+#         draw_text_atY('(down arrow key) == move down', 20, (255, 255, 255), win , 240, False)
+#         draw_text_atY('Version 2.5.3', 15, (255, 255, 255), win , 300, False)
         
-        pygame.display.update()
-        pygame.time.delay(500)
-        draw_text_atY('Press any key to begin.', 60, (0,0,0), win , 100)
-        pygame.display.update()
+#         pygame.display.update()
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 run = False
+ 
+#             if event.type == pygame.KEYDOWN:
+#                 main()
+#     #testing for this option 
+#     #pygame.quit()
+
+
+
+def display_instructions(win):
+    win.fill( (0,0,0)  )
+    draw_text_atY('Instructions.', 40, (255, 255, 255), win , 120 ,True)
+    draw_text_atY('(up arrow key )== move up', 30, (255, 255, 255), win , 160, False)
+    draw_text_atY('(left arrow key) == move left', 30, (255, 255, 255), win, 200, False)
+    draw_text_atY('(right arrow key) == move right', 30, (255, 255, 255), win , 240, False)
+    draw_text_atY('(down arrow key) == move down', 30, (255, 255, 255), win , 280, False)
+    pygame.display.update()
+
+
+
+
+def display_about(win):
+    win.fill( (0,0,0) )
+    draw_text_atY('Version 2.7.4', 15, (255, 255, 255), win , 300, False)
+    draw_text_atY("Designed with love by Mohit Kumar ",30 , (255,255,255) , win , 160 ,False)
+    draw_text_atY("For young developers so that they can :",20 , (255,255,255) , win , 190 ,False)
+    draw_text_atY("learn from examples",20 , (255,255,255) , win , 210 ,False)
+    draw_text_atY("and even play too",20 , (255,255,255) , win , 230 ,False)   
+    draw_text_atY('my github handle @mohitiitr', 30 ,(255,255,255) , win , 270,False) 
+    pygame.display.update()
+
+    
+
+
+
+def display_menu(win , index ):
+    win.fill((0,0,0))
+    if index == 0:
+        draw_text_atY('Start Game', 60, (21,239,232), win , 100)
+        draw_text_atY('Instructions', 50, (255, 255, 255), win , 200)
+        draw_text_atY('About Game', 50, (255, 255, 255), win , 300)
+    elif index == 1:
+        draw_text_atY('Start Game', 50, (255, 255, 255), win , 100)
+        draw_text_atY('Instructions', 60,(21,239,232), win , 200)
+        draw_text_atY('About Game', 50, (255, 255, 255), win , 300)      
+    elif index == 2 :    
+        draw_text_atY('Start Game', 50, (255, 255, 255), win , 100)
+        draw_text_atY('Instructions', 50, (255, 255, 255), win , 200)
+        draw_text_atY('About Game', 60 ,(21,239,232), win , 300)
+    else :
+        draw_text_atY('Index error index is ' + str(index), 50, (255, 255, 255), win , 100)    
+    pygame.display.update()
+     
+
+
+
+
+def main_menu():
+    global win
+    run = True
+    index = 0
+    display_menu(win,index)
+    while run:
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
  
             if event.type == pygame.KEYDOWN:
-                main()
+
+                if event.key == pygame.K_UP:
+                    index = (index-1 )%3
+                    if (index<0):
+                        index+=3
+                    display_menu(win,index)
+
+                elif event.key == pygame.K_DOWN:
+                    index = (index+1 )%3
+                    display_menu(win,index)
+
+                elif event.key == pygame.K_RETURN:  
+                    if index == 0 :
+                        main()
+                    elif index == 1:
+                        display_instructions(win)
+                        pygame.time.delay(5000)
+                        index = 0
+                    elif index == 2:
+                        display_about(win)
+                        pygame.time.delay(5000)
+                        index = 0    
+                    display_menu(win,index)    
+                            
+
     #testing for this option 
     #pygame.quit()
+ 
+
  
  
 win = pygame.display.set_mode((s_width, s_height))

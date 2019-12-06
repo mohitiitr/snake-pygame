@@ -1,0 +1,4 @@
+details.txt
+
+
+this has a menu option in the begining to get the stuff done
