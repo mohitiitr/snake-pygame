@@ -143,9 +143,9 @@ def is_next_move_valid(x , y):
             if x == item[0] and y == item[1]:
                 return False
 
-    if ( x >= top_left_x+play_width + 3* block_size )   or (x <= top_left_x + 1 * block_size   ) :
+    if (  (x >= top_left_x + play_width )  or (x<=top_left_x)  ) :
         return False
-    if (y >= top_left_y+play_height  - 2* block_size) or (y <= top_left_y - 4 *block_size) :
+    if ( y >= top_left_y+play_height  ) or (y <= top_left_y ) :
         return False
 
     return True              
